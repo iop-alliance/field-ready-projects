@@ -1,0 +1,6 @@
+{
+  "name": "field-ready-airtable",
+  "dependencies": {
+    "airtable": "^0.11.1"
+  }
+}

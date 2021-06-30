@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+const Airtable = require('airtable');
+const {apiKey} = require('./secrets');
+const base = new Airtable({apiKey}).base('appGVXX1d94zOm395');
+
+const data = [];
+
+const x = base('FR Portfolio')
+  .select({
+    view: 'Grid view',
+  })
+  .all()
+  .then(records => {
+    const fields = records.map(record => record.fields);
+    console.log(JSON.stringify(fields, null, 2));
+  });
+
+//.eachPage(
+//  (records, fetchNextPage) => {
+//    // This function (`page`) will get called for each page of records.
+
+//    records.forEach(record => {
+//      data.push(JSON.parse(JSON.stringify(record.fields)));
+//    });
+
+//    // To fetch the next page of records, call `fetchNextPage`.
+//    // If there are more records, `page` will get called again.
+//    // If there are no more records, `done` will get called.
+//    fetchNextPage();
+//  },
+//  err => {
+//    if (err) {
+//      console.error(err);
+//      return;
+//    }
+//  },
+//)
