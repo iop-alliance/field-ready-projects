@@ -63,7 +63,7 @@ async function getImage(projectName, image) {
   } else {
     try {
       console.warn(image);
-      const thumb = await imageThumbnail(r.body, {height: 200, width: 290});
+      const thumb = await imageThumbnail(r.body, {height: 200, width: 290, fit: 'cover'});
       await fs.promises.writeFile(imagePath, thumb);
     } catch (e) {
       console.warn('--------------------------------------------');
