@@ -16,7 +16,6 @@ const projects = projectData
       title: p.Name,
     };
   })
-  .sort((x, y) => x.id > y.id);
 
 class Home extends React.Component {
   state = {result: projects, searching: false};
