@@ -19,18 +19,23 @@ base('FR Portfolio')
     const fields = records.map(record => record.fields);
     return Promise.all(
       fields.map(async p => {
-        // Full list of items using additional tables: ['Risk Assessment', 'Test Plan', 'Maker Manual', 'FAI', 'BOM', 'User Manual']
-        const [maker, user] = await Promise.all(
-          ['Maker Manual', 'User Manual'].map(async n => {
+        await Promise.all(
+          [
+            // These are referenced records:
+            //'Risk Assessment',
+            //'Test Plan',
+            //'FAI',
+            //'BOM',
+            'Maker Manual',
+            'User Manual',
+          ].map(async n => {
             const rec = p[n]?.[0];
             if (rec) {
               const record = await base('FR Portfolio').find(rec);
-              return record.fields;
+              p[n] = record.fields;
             }
           }),
         );
-        p['Maker Manual'] = maker;
-        p['User Manual'] = user;
         const image =
           p['Catalogue Image']?.[0]?.thumbnails?.large?.url ||
           p['In use Image']?.[0]?.thumbnails?.large?.url ||
