@@ -19,6 +19,9 @@ base('FR Portfolio')
     const fields = records.map(record => record.fields);
     return Promise.all(
       fields.map(async p => {
+        if (p['Eng Dwg'] == null && p['CAD'] == null) {
+          return null
+        }
         await Promise.all(
           [
             // These are referenced records:
@@ -46,6 +49,7 @@ base('FR Portfolio')
     );
   })
   .then(projects => {
+    projects = projects.filter(x => x)
     console.log(JSON.stringify(projects, null, 2));
   });
 
