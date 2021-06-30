@@ -23,6 +23,7 @@ const ProjectCard = ({ project }) => {
     >
       <div
         style={{
+          width: 290,
           height: 200,
           overflow: 'hidden',
           display: 'flex',

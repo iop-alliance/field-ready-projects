@@ -1,24 +1,40 @@
-import React from 'react'
-import Head from 'next/head'
-import { createFilter } from 'react-search-input'
-import { Container, Input } from 'semantic-ui-react'
-import 'semantic-ui-css/semantic.css'
-import projects from '../projects.json'
-import ProjectCard from '../components/ProjectCard'
+import React from 'react';
+import Head from 'next/head';
+import {createFilter} from 'react-search-input';
+import {Container, Input} from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.css';
+import projectData from '../projects.json';
+import ProjectCard from '../components/ProjectCard';
+
+const projects = projectData.map(p => {
+  console.log(p);
+  const image =
+    p['Catalogue Image']?.[0]?.thumbnails?.large?.url ||
+    p['In use Image']?.[0]?.thumbnails?.large?.url ||
+    p['CAD Image']?.[0]?.thumbnails?.large?.url;
+
+  return {
+    id: p['Part No.'],
+    'documentation-home': '/' + p['Part No.'],
+    image,
+    description: p.Description,
+    title: p.Name,
+  };
+});
 
 class Home extends React.Component {
-  state = { result: projects, searching: false }
+  state = {result: projects, searching: false};
   render() {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: 1200 }}>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+        <div style={{maxWidth: 1200}}>
           <Head>
             <title>Field Ready Projects</title>
           </Head>
           <div className="top">
             <div className="logo">
               <a href="https://www.fieldready.org">
-                <img style={{ height: 200 }} src="/logo.png" />
+                <img style={{height: 200}} src="/logo.png" />
               </a>
             </div>
             <div className="search">
@@ -33,11 +49,11 @@ class Home extends React.Component {
           </div>
           <div className="section">
             <div id="projects">
-              {/*this.state.result.map(project => (
+              {this.state.result.map(project => (
                 <ProjectCard key={project.id} project={project} />
-              ))*/}
+              ))}
               {this.state.result.length === 0 ? (
-                <p style={{ marginTop: 80 }}>Sorry, no results</p>
+                <p style={{marginTop: 80}}>Sorry, no results</p>
               ) : null}
             </div>
           </div>
@@ -78,29 +94,35 @@ class Home extends React.Component {
           }
         `}</style>
       </div>
-    )
+    );
   }
   handleKeydown(event) {
     //lose focus when pressing enter key, for mobile
     if (event.which == 13) {
-      document.getElementsByClassName('searchInput')[0].firstElementChild.blur()
+      document
+        .getElementsByClassName('searchInput')[0]
+        .firstElementChild.blur();
     }
-    return false
+    return false;
   }
   componentDidMount() {
     document
       .getElementsByClassName('searchInput')[0]
-      .firstElementChild.addEventListener('keydown', this.handleKeydown)
+      .firstElementChild.addEventListener('keydown', this.handleKeydown);
   }
   searchUpdated = e => {
-    clearTimeout(this.timeout)
-    const term = e.target.value
+    clearTimeout(this.timeout);
+    const term = e.target.value;
     this.timeout = setTimeout(() => {
-      const filter = createFilter(term, ['title', 'description', 'licensor.name'])
-      const result = projects.filter(filter)
-      this.setState({ result, searching: term.length > 0 })
-    }, 100)
-  }
+      const filter = createFilter(term, [
+        'title',
+        'description',
+        'licensor.name',
+      ]);
+      const result = projects.filter(filter);
+      this.setState({result, searching: term.length > 0});
+    }, 100);
+  };
 }
 
-export default Home
+export default Home;
