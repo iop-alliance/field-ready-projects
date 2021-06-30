@@ -75,6 +75,9 @@ export default function ProjectPage({project}) {
           <ImageGallery showPlayButton={false} items={images} />
         </div>
       </div>
+      <details>
+        <pre>{JSON.stringify(project, null, 2)}</pre>
+      </details>
       <style jsx>{`
         .back {
           font-size: 19pt;
