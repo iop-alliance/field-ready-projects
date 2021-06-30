@@ -1,2 +1,4 @@
 secrets.js
 node_modules/
+projects.json
+.next/

@@ -1,6 +1,24 @@
 {
-  "name": "field-ready-airtable",
+  "name": "field-ready-projects-website",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "yarn projects && next build",
+    "start": "next start",
+    "projects": "./get_projects > projects.json"
+  },
   "dependencies": {
-    "airtable": "^0.11.1"
+    "@zeit/next-css": "^1.0.1",
+    "next": "9.3.2",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-lazy-load-image-component": "^1.4.1",
+    "react-search-input": "^0.11.3",
+    "semantic-ui-react": "^0.88.2"
+  },
+  "devDependencies": {
+    "airtable": "^0.11.1",
+    "semantic-ui-css": "^2.4.1",
+    "image-thumbnail": "https://github.com/OpenKnowHow/image-thumbnail"
   }
 }

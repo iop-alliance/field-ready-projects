@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+const Airtable = require('airtable');
+const {apiKey} = require('./secrets');
+const base = new Airtable({apiKey}).base('appGVXX1d94zOm395');
+
+const data = [];
+
+base('FR Portfolio')
+  .select({
+    view: 'Grid view',
+  })
+  .all()
+  .then(records => {
+    const fields = records.map(record => record.fields);
+    console.log(JSON.stringify(fields, null, 2));
+  });
