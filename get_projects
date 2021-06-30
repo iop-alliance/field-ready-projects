@@ -49,7 +49,6 @@ base('FR Portfolio')
   })
   .then(projects => {
     projects = projects.filter(x => x)
-    projects.sort((a, b) => a['Part No.'] > b['Part No.'])
     console.log(JSON.stringify(projects, null, 2));
   });
 
