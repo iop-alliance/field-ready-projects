@@ -7,12 +7,9 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 import projects from '../projects.json';
 
 export default function ProjectPage({project}) {
-  const partNo = project['Part No.'];
-  project = {...project, 'Part No.': undefined};
-  const name = project['Name'].trim();
-  project = {...project, Name: undefined};
-  const description = project['Description'];
-  project = {...project, Description: undefined};
+  const partNo = project['Part No.']?.trim();
+  const name = project['Name']?.trim();
+  const description = project['Description']?.trim();
   const images = [
     ...project['Catalogue Image'],
     ...project['In use Image'],
@@ -21,7 +18,6 @@ export default function ProjectPage({project}) {
     return {
       original: url,
       thumbnail: thumbnails?.large?.url,
-      originalClass: 'full-image',
       fullscreen: url,
       fullscreenHeight: 'inherit',
     };
@@ -33,8 +29,8 @@ export default function ProjectPage({project}) {
     'Catalogue Image': undefined,
     thumbnail: undefined,
   };
-  const cad = project['CAD'];
-  project = {...project, CAD: undefined};
+  const cadFiles = project['CAD'];
+  const drawings = project['Eng Dwg'];
   return (
     <Container style={{marginTop: 50}}>
       <div className="main">
@@ -53,11 +49,16 @@ export default function ProjectPage({project}) {
           <ImageGallery showPlayButton={false} items={images} />
         </div>
       </div>
-      <pre>{JSON.stringify(project, null, 2)}</pre>
+      <pre>{JSON.stringify({}, null, 2)}</pre>
       <style jsx>{`
         .main {
           max-width: 1200px;
           display: flex;
+        }
+        @media (max-width: 800px) {
+          .main {
+            flex-wrap: wrap;
+          }
         }
         .left {
           padding: 20px;
