@@ -4,11 +4,6 @@ import { Card } from 'semantic-ui-react'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const ProjectCard = ({ project }) => {
-  const author =
-    project.licensor?.name ||
-    project.contact?.name ||
-    project.contributors?.[0]?.name ||
-    ''
   let description = project.description || ''
   if (description.length > 140) {
     description = description.slice(0, 140) + '...'
@@ -49,7 +44,7 @@ const ProjectCard = ({ project }) => {
             textOverflow: 'ellipsis',
           }}
         >
-          {author}
+          {project.id}
         </Card.Meta>
         <Card.Description
           style={{

@@ -6,15 +6,17 @@ import 'semantic-ui-css/semantic.css';
 import projectData from '../projects.json';
 import ProjectCard from '../components/ProjectCard';
 
-const projects = projectData.map(p => {
-  return {
-    id: p['Part No.'],
-    'documentation-home': '/' + p['Part No.'],
-    image: p.thumbnail,
-    description: p.Description,
-    title: p.Name,
-  };
-});
+const projects = projectData
+  .map(p => {
+    return {
+      id: p['Part No.'],
+      'documentation-home': '/' + p['Part No.'],
+      image: p.thumbnail,
+      description: p.Description,
+      title: p.Name,
+    };
+  })
+  .sort((x, y) => x.id > y.id);
 
 class Home extends React.Component {
   state = {result: projects, searching: false};
@@ -108,11 +110,7 @@ class Home extends React.Component {
     clearTimeout(this.timeout);
     const term = e.target.value;
     this.timeout = setTimeout(() => {
-      const filter = createFilter(term, [
-        'title',
-        'description',
-        'licensor.name',
-      ]);
+      const filter = createFilter(term, ['title', 'description', 'id']);
       const result = projects.filter(filter);
       this.setState({result, searching: term.length > 0});
     }, 100);
