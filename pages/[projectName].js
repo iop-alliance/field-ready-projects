@@ -1,7 +1,9 @@
 import React from 'react';
 import Head from 'next/head';
 import {Container, Header} from 'semantic-ui-react';
+import ImageGallery from 'react-image-gallery';
 import 'semantic-ui-css/semantic.css';
+import 'react-image-gallery/styles/css/image-gallery.css';
 import projects from '../projects.json';
 
 export default function ProjectPage({project}) {
@@ -11,11 +13,19 @@ export default function ProjectPage({project}) {
   project = {...project, Name: undefined};
   const description = project['Description'];
   project = {...project, Description: undefined};
-  const images = {
-    cad: project['CAD Image'],
-    in_use: project['In use Image'],
-    catalogue: project['Catalogue Image'],
-  };
+  const images = [
+    ...project['Catalogue Image'],
+    ...project['In use Image'],
+    ...project['CAD Image'],
+  ].map(({url, thumbnails}) => {
+    return {
+      original: url,
+      thumbnail: thumbnails?.large?.url,
+      originalClass: 'full-image',
+      fullscreen: url,
+      fullscreenHeight: 'inherit',
+    };
+  });
   project = {
     ...project,
     'CAD Image': undefined,
@@ -26,9 +36,35 @@ export default function ProjectPage({project}) {
   const cad = project['CAD'];
   project = {...project, CAD: undefined};
   return (
-    <Container>
-      <Header as="h1">{name}</Header>
+    <Container style={{marginTop: 50}}>
+      <div className="main">
+        <div className="left">
+          <Header as="h1">
+            {name}
+            <Header
+              sub
+              style={{fontSize: 19, fontStyle: 'italic', color: 'grey'}}>
+              {partNo}
+            </Header>
+          </Header>
+          <div style={{fontSize: 19}}>{description}</div>
+        </div>
+        <div className="right">
+          <ImageGallery showPlayButton={false} items={images} />
+        </div>
+      </div>
       <pre>{JSON.stringify(project, null, 2)}</pre>
+      <style jsx>{`
+        .main {
+          max-width: 1200px;
+          display: flex;
+        }
+        .left {
+          padding: 20px;
+        }
+        .right {
+        }
+      `}</style>
     </Container>
   );
 }
