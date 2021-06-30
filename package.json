@@ -9,16 +9,15 @@
   },
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
+    "airtable": "^0.11.1",
+    "image-thumbnail": "https://github.com/OpenKnowHow/image-thumbnail#for-field-ready-projects",
+    "isomorphic-unfetch": "^3.1.0",
     "next": "9.3.2",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-lazy-load-image-component": "^1.4.1",
     "react-search-input": "^0.11.3",
-    "semantic-ui-react": "^0.88.2"
-  },
-  "devDependencies": {
-    "airtable": "^0.11.1",
     "semantic-ui-css": "^2.4.1",
-    "image-thumbnail": "https://github.com/OpenKnowHow/image-thumbnail"
+    "semantic-ui-react": "^0.88.2"
   }
 }

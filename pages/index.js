@@ -7,16 +7,10 @@ import projectData from '../projects.json';
 import ProjectCard from '../components/ProjectCard';
 
 const projects = projectData.map(p => {
-  console.log(p);
-  const image =
-    p['Catalogue Image']?.[0]?.thumbnails?.large?.url ||
-    p['In use Image']?.[0]?.thumbnails?.large?.url ||
-    p['CAD Image']?.[0]?.thumbnails?.large?.url;
-
   return {
     id: p['Part No.'],
     'documentation-home': '/' + p['Part No.'],
-    image,
+    image: p.thumbnail,
     description: p.Description,
     title: p.Name,
   };
@@ -97,7 +91,7 @@ class Home extends React.Component {
     );
   }
   handleKeydown(event) {
-    //lose focus when pressing enter key, for mobile
+    // lose focus when pressing enter key, for mobile
     if (event.which == 13) {
       document
         .getElementsByClassName('searchInput')[0]

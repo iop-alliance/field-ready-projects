@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 const Airtable = require('airtable');
+const fetch = require('isomorphic-unfetch');
+const path = require('path');
+const fs = require('fs');
+const util = require('util');
+const accessPromise = util.promisify(fs.access);
+const imageThumbnail = require('image-thumbnail');
+
 const {apiKey} = require('./secrets');
 const base = new Airtable({apiKey}).base('appGVXX1d94zOm395');
-
-const data = [];
 
 base('FR Portfolio')
   .select({
@@ -12,5 +17,74 @@ base('FR Portfolio')
   .all()
   .then(records => {
     const fields = records.map(record => record.fields);
-    console.log(JSON.stringify(fields, null, 2));
+    return Promise.all(
+      fields.map(async p => {
+        const image =
+          p['Catalogue Image']?.[0]?.thumbnails?.large?.url ||
+          p['In use Image']?.[0]?.thumbnails?.large?.url ||
+          p['CAD Image']?.[0]?.thumbnails?.large?.url;
+        const thumbnail = await getImage(p['Part No.'], image);
+        return {...p, thumbnail};
+      }),
+    );
+  })
+  .then(projects => {
+    console.log(JSON.stringify(projects, null, 2));
   });
+
+async function getImage(projectName, image) {
+  if (!image) {
+    return null;
+  }
+
+  const ext = path.extname(image).toLowerCase();
+  const imageUrl = `/images/${projectName}${ext}`;
+  const imagePath = path.join('public', imageUrl);
+
+  const doesExist = await exists(imagePath);
+  if (doesExist) {
+    return imageUrl;
+  }
+
+  const r = await fetch(image).catch(e => {
+    console.warn('--------------------------------------------');
+    console.warn(e);
+    console.warn('--------------------------------------------');
+    return null;
+  });
+
+  if (
+    r.status != 200 ||
+    !/^image\//.test(r.headers.get('Content-Type')) ||
+    r.body == null
+  ) {
+    console.warn("Can't read image:", image);
+    return null;
+  } else {
+    try {
+      console.warn(image);
+      const thumb = await imageThumbnail(r.body, {height: 200, width: 290});
+      await fs.promises.writeFile(imagePath, thumb);
+    } catch (e) {
+      console.warn('--------------------------------------------');
+      console.warn(e);
+      console.warn('............................................');
+      console.warn("Can't write thumbnail for:", image);
+      console.warn('--------------------------------------------');
+      return null;
+    }
+  }
+  return imageUrl;
+}
+
+function exists(file) {
+  return accessPromise(file, fs.constants.F_OK)
+    .then(x => x == null)
+    .catch(err => {
+      if (err.code === 'ENOENT') {
+        return false;
+      } else {
+        throw err;
+      }
+    });
+}
