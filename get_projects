@@ -7,8 +7,7 @@ const util = require('util');
 const accessPromise = util.promisify(fs.access);
 const imageThumbnail = require('image-thumbnail');
 
-const {apiKey} = require('./secrets');
-const base = new Airtable({apiKey}).base('appGVXX1d94zOm395');
+const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base('appGVXX1d94zOm395');
 
 base('FR Portfolio')
   .select({

@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "yarn projects && next build",
+    "export": "yarn build && next export",
     "start": "next start",
     "projects": "./get_projects > projects.json"
   },
@@ -20,5 +21,8 @@
     "react-search-input": "^0.11.3",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2"
+  },
+  "devDependencies": {
+    "netlify-cli": "^4.0.3"
   }
 }
