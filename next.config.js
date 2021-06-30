@@ -1,4 +1,4 @@
-const withCss = require('@zeit/next-css')
+const withCss = require('@zeit/next-css');
 
 module.exports = withCss({
   webpack(config) {
@@ -9,11 +9,11 @@ module.exports = withCss({
         options: {
           publicPath: '/_next/static/',
           outputPath: 'static',
-          name: '[name].[hash].[ext]'
-        }
-      }
-    })
+          name: '[name].[hash].[ext]',
+        },
+      },
+    });
 
-    return config
-  }
-})
+    return config;
+  },
+});
