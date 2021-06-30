@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
-import {Container, Header} from 'semantic-ui-react';
+import Link from 'next/link';
+import {Container, Header, Divider} from 'semantic-ui-react';
 import ImageGallery from 'react-image-gallery';
 import 'semantic-ui-css/semantic.css';
 import 'react-image-gallery/styles/css/image-gallery.css';
@@ -33,6 +34,10 @@ export default function ProjectPage({project}) {
   const drawings = project['Eng Dwg'];
   return (
     <Container style={{marginTop: 50}}>
+      <div className="back">
+        <Link href="/">Projects</Link>
+        <span>{' >'}</span>
+      </div>
       <div className="main">
         <div className="left">
           <Header as="h1">
@@ -44,26 +49,60 @@ export default function ProjectPage({project}) {
             </Header>
           </Header>
           <div style={{fontSize: 19}}>{description}</div>
+          <Divider />
+          <div className="files">
+            <Header as="h3">CAD Files</Header>
+            <ul>
+              {cadFiles.map(f => (
+                <li key={f.filename}>
+                  <a href={f.url}>{f.filename}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="files">
+            <Header as="h3">Engineering Drawings</Header>
+            <ul>
+              {drawings.map(f => (
+                <li key={f.filename}>
+                  <a href={f.url}>{f.filename}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <div className="right">
           <ImageGallery showPlayButton={false} items={images} />
         </div>
       </div>
-      <pre>{JSON.stringify({}, null, 2)}</pre>
       <style jsx>{`
+        .back {
+          font-size: 19pt;
+        }
         .main {
           max-width: 1200px;
           display: flex;
+        }
+        .left {
+          padding: 20px;
+          width: 50%;
+        }
+        .right {
+          width: 50%;
+        }
+        .files {
+          margin-top: 20px;
         }
         @media (max-width: 800px) {
           .main {
             flex-wrap: wrap;
           }
-        }
-        .left {
-          padding: 20px;
-        }
-        .right {
+          .left {
+            width: 100%;
+          }
+          .right {
+            width: 100%;
+          }
         }
       `}</style>
     </Container>
