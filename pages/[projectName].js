@@ -11,25 +11,7 @@ export default function ProjectPage({project}) {
   const partNo = project['Part No.']?.trim();
   const name = project['Name']?.trim();
   const description = project['Description']?.trim();
-  const images = [
-    ...project['Catalogue Image'],
-    ...project['In use Image'],
-    ...project['CAD Image'],
-  ].map(({url, thumbnails}) => {
-    return {
-      original: url,
-      thumbnail: thumbnails?.large?.url,
-      fullscreen: url,
-      fullscreenHeight: 'inherit',
-    };
-  });
-  project = {
-    ...project,
-    'CAD Image': undefined,
-    'In use Image': undefined,
-    'Catalogue Image': undefined,
-    thumbnail: undefined,
-  };
+  const images = project['images']
   const cadFiles = project['CAD'];
   const drawings = project['Eng Dwg'];
   return (

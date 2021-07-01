@@ -8,10 +8,12 @@ import ProjectCard from '../components/ProjectCard';
 
 const projects = projectData
   .map(p => {
+    console.log(p.images)
+    console.log(p.images[0]?.projectCard)
     return {
       id: p['Part No.'],
       'documentation-home': '/' + p['Part No.'],
-      image: p.thumbnail,
+      image: p.images[0]?.projectCard,
       description: p.Description,
       title: p.Name,
     };

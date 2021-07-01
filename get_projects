@@ -7,7 +7,9 @@ const util = require('util');
 const accessPromise = util.promisify(fs.access);
 const imageThumbnail = require('image-thumbnail');
 
-const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base('appGVXX1d94zOm395');
+const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(
+  'appGVXX1d94zOm395',
+);
 
 base('FR Portfolio')
   .select({
@@ -19,7 +21,7 @@ base('FR Portfolio')
     return Promise.all(
       fields.map(async p => {
         if (p['Eng Dwg'] == null && p['CAD'] == null) {
-          return null
+          return null;
         }
         await Promise.all(
           [
@@ -38,35 +40,57 @@ base('FR Portfolio')
             }
           }),
         );
-        const image =
-          p['Catalogue Image']?.[0]?.thumbnails?.large?.url ||
-          p['In use Image']?.[0]?.thumbnails?.large?.url ||
-          p['CAD Image']?.[0]?.thumbnails?.large?.url;
-        const thumbnail = await getImage(p['Part No.'], image);
-        return {...p, thumbnail};
+        const partNo = p['Part No.'];
+        const images = await Promise.all(
+          [
+            ...p['Catalogue Image'],
+            ...p['In use Image'],
+            ...p['CAD Image'],
+          ].map(async ({url, id}) => {
+            const original = await makeThumbnail(
+              partNo + '-' + id,
+              url,
+              400,
+              300,
+            );
+            const projectCard = await makeThumbnail(
+              partNo + '-' + id,
+              url,
+              290,
+              200,
+            );
+            return {
+              original,
+              thumbnail: original,
+              projectCard,
+              fullscreen: url,
+            };
+          }),
+        );
+        return {...p, images};
       }),
     );
   })
   .then(projects => {
-    projects = projects.filter(x => x)
+    projects = projects.filter(x => x);
     console.log(JSON.stringify(projects, null, 2));
   });
 
-async function getImage(projectName, image) {
-  if (!image) {
+async function makeThumbnail(id, imageUrl, width, height) {
+  if (!imageUrl) {
     return null;
   }
 
-  const ext = path.extname(image).toLowerCase();
-  const imageUrl = `/images/${projectName}${ext}`;
-  const imagePath = path.join('public', imageUrl);
+  const ext = path.extname(imageUrl).toLowerCase();
+  const thumbnailUrl = `/images/${id}-${width}x${height}${ext}`;
+  const imagePath = path.join('public', thumbnailUrl);
 
   const doesExist = await exists(imagePath);
   if (doesExist) {
-    return imageUrl;
+    return thumbnailUrl;
   }
 
-  const r = await fetch(image).catch(e => {
+  const r = await fetch(imageUrl).catch(e => {
     console.warn('--------------------------------------------');
     console.warn(e);
     console.warn('--------------------------------------------');
@@ -78,14 +102,14 @@ async function getImage(projectName, image) {
     !/^image\//.test(r.headers.get('Content-Type')) ||
     r.body == null
   ) {
-    console.warn("Can't read image:", image);
+    console.warn("Can't read image:", imageUrl);
     return null;
   } else {
     try {
-      console.warn(image);
+      console.warn(imageUrl);
       const thumb = await imageThumbnail(r.body, {
-        height: 200,
-        width: 290,
+        height,
+        width,
         fit: 'cover',
       });
       await fs.promises.writeFile(imagePath, thumb);
@@ -93,12 +117,12 @@ async function getImage(projectName, image) {
       console.warn('--------------------------------------------');
       console.warn(e);
       console.warn('............................................');
-      console.warn("Can't write thumbnail for:", image);
+      console.warn("Can't write thumbnail for:", imageUrl);
       console.warn('--------------------------------------------');
       return null;
     }
   }
-  return imageUrl;
+  return thumbnailUrl;
 }
 
 function exists(file) {

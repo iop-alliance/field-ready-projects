@@ -6295,9 +6295,9 @@ image-size@^1.0.0:
   dependencies:
     queue "6.0.2"
 
-"image-thumbnail@https://github.com/OpenKnowHow/image-thumbnail":
+"image-thumbnail@https://github.com/OpenKnowHow/image-thumbnail#for-field-ready-projects":
   version "1.0.14"
-  resolved "https://github.com/OpenKnowHow/image-thumbnail#bada18e49553440518e10fe10e1a999e3c21d0a9"
+  resolved "https://github.com/OpenKnowHow/image-thumbnail#851f2f06cb112935944eec803334796d05d331e9"
   dependencies:
     axios "^0.21.1"
     image-size "^1.0.0"
