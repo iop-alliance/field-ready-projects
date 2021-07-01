@@ -11,86 +11,93 @@ export default function ProjectPage({project}) {
   const partNo = project['Part No.']?.trim();
   const name = project['Name']?.trim();
   const description = project['Description']?.trim();
-  const images = project['images']
+  const images = project['images'];
   const cadFiles = project['CAD'];
   const drawings = project['Eng Dwg'];
   return (
-    <Container style={{marginTop: 50}}>
-      <div className="back">
-        <Link href="/">Projects</Link>
-        <span>{' >'}</span>
-      </div>
-      <div className="main">
-        <div className="left">
-          <Header as="h1">
-            {name}
-            <Header
-              sub
-              style={{fontSize: 19, fontStyle: 'italic', color: 'grey'}}>
-              {partNo}
+    <>
+      <Head>
+        <title>
+          {name} - {partNo} - Field Ready Projects
+        </title>
+      </Head>
+      <Container style={{marginTop: 50}}>
+        <div className="back">
+          <Link href="/" passHref><a>Projects</a></Link>
+          <span>{' >'}</span>
+        </div>
+        <div className="main">
+          <div className="left">
+            <Header as="h1">
+              {name}
+              <Header
+                sub
+                style={{fontSize: 19, fontStyle: 'italic', color: 'grey'}}>
+                {partNo}
+              </Header>
             </Header>
-          </Header>
-          <div style={{fontSize: 19}}>{description}</div>
-          <Divider />
-          <div className="files">
-            <Header as="h3">CAD Files</Header>
-            <ul>
-              {cadFiles.map(f => (
-                <li key={f.filename}>
-                  <a href={f.url}>{f.filename}</a>
-                </li>
-              ))}
-            </ul>
+            <div style={{fontSize: 19}}>{description}</div>
+            <Divider />
+            <div className="files">
+              <Header as="h3">CAD Files</Header>
+              <ul>
+                {cadFiles.map(f => (
+                  <li key={f.filename}>
+                    <a href={f.url}>{f.filename}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="files">
+              <Header as="h3">Engineering Drawings</Header>
+              <ul>
+                {drawings.map(f => (
+                  <li key={f.filename}>
+                    <a href={f.url}>{f.filename}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="files">
-            <Header as="h3">Engineering Drawings</Header>
-            <ul>
-              {drawings.map(f => (
-                <li key={f.filename}>
-                  <a href={f.url}>{f.filename}</a>
-                </li>
-              ))}
-            </ul>
+          <div className="right">
+            <ImageGallery showPlayButton={false} items={images} />
           </div>
         </div>
-        <div className="right">
-          <ImageGallery showPlayButton={false} items={images} />
-        </div>
-      </div>
-      <details>
-        <pre>{JSON.stringify(project, null, 2)}</pre>
-      </details>
-      <style jsx>{`
-        .back {
-          font-size: 19pt;
-        }
-        .main {
-          max-width: 1200px;
-          display: flex;
-        }
-        .left {
-          padding: 20px;
-          width: 50%;
-        }
-        .right {
-          width: 50%;
-        }
-        .files {
-          margin-top: 20px;
-        }
-        @media (max-width: 800px) {
+        <details>
+          <pre>{JSON.stringify(project, null, 2)}</pre>
+        </details>
+        <style jsx>{`
+          .back {
+            font-size: 19pt;
+          }
           .main {
-            flex-wrap: wrap;
+            max-width: 1200px;
+            display: flex;
           }
           .left {
-            width: 100%;
+            padding: 20px;
+            width: 50%;
           }
           .right {
-            width: 100%;
+            width: 50%;
           }
-        }
-      `}</style>
-    </Container>
+          .files {
+            margin-top: 20px;
+          }
+          @media (max-width: 800px) {
+            .main {
+              flex-wrap: wrap;
+            }
+            .left {
+              width: 100%;
+            }
+            .right {
+              width: 100%;
+            }
+          }
+        `}</style>
+      </Container>
+    </>
   );
 }
 
