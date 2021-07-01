@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const yaml = require('yaml');
+
+const projects = require('./projects.json');
+
+for (const project of projects) {
+  const id = project['Part No.'];
+  const manifest = {
+    title: `${project['Part No.']} - ${project.Name}`,
+    description: project.Description,
+    contributors: [{name: project.Designer}],
+    'date-created': new Date().toISOString().split('T')[0],
+    'manifest-language': 'En-US',
+    'documentation-language': 'En-US',
+    image: project.images[0].fullscreen,
+    license: {
+      documentation: project.Licence || null,
+      hardware: project['Open Hardware Licence'] || null,
+    },
+    licensor: 'Field Ready',
+    made: project.Maker != null,
+    'design-files': project.CAD.map(({filename, url}) => {
+      return {path: url, title: filename};
+    }),
+    schematics: project['Eng Dwg'].map(({filename, url}) => {
+      return {path: url, title: filename};
+    }),
+    'documentation-home': `https://field-ready-projects.openknowhow.org/${id}`,
+  };
+
+  const manifestYaml = yaml.stringify(manifest);
+
+  fs.writeFileSync(
+    path.join('public', 'manifests', `okh-${id}.yml`),
+    manifestYaml,
+  );
+  fs.writeFileSync(
+    path.join('public', 'manifests', `okh-${id}.json`),
+    JSON.stringify(manifest, null, 2),
+  );
+}

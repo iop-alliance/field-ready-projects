@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "yarn projects && next build",
+    "build": "yarn projects && yarn manifests && next build",
+    "manifests": "./make_manifests",
     "export": "yarn build && next export",
     "start": "next start",
     "projects": "./get_projects > projects.json"
@@ -20,7 +21,8 @@
     "react-lazy-load-image-component": "^1.4.1",
     "react-search-input": "^0.11.3",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^0.88.2"
+    "semantic-ui-react": "^0.88.2",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "netlify-cli": "^4.0.3"
