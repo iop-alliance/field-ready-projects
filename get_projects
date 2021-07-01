@@ -3,9 +3,9 @@ const Airtable = require('airtable');
 const fetch = require('isomorphic-unfetch');
 const path = require('path');
 const fs = require('fs');
-const util = require('util');
-const accessPromise = util.promisify(fs.access);
 const imageThumbnail = require('image-thumbnail');
+
+const {exists} = require('./utils');
 
 const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(
   'appGVXX1d94zOm395',
@@ -123,16 +123,4 @@ async function makeThumbnail(id, imageUrl, width, height) {
     }
   }
   return thumbnailUrl;
-}
-
-function exists(file) {
-  return accessPromise(file, fs.constants.F_OK)
-    .then(x => x == null)
-    .catch(err => {
-      if (err.code === 'ENOENT') {
-        return false;
-      } else {
-        throw err;
-      }
-    });
 }
