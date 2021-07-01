@@ -94,12 +94,6 @@ export default function ProjectPage({project}) {
   );
 }
 
-function pop(obj, key) {
-  const x = obj[key];
-  obj = {...obj, [key]: undefined};
-  return [x, obj];
-}
-
 export async function getStaticProps(context) {
   const project = projects.find(
     p => p['Part No.'] === context.params.projectName,
