@@ -2,3 +2,9 @@ node_modules/
 projects.json
 .next/
 .env
+yarn-error.log
+public/images/
+!public/images/placeholder.png
+public/manifests/
+!public/manifests/.gitkeep
+out/
