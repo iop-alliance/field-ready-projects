@@ -6,6 +6,9 @@ const yaml = require('yaml');
 
 const projects = require('./projects.json');
 
+const list = [];
+const listJson = [];
+
 for (const project of projects) {
   const id = project['Part No.'];
   const manifest = {
@@ -31,14 +34,28 @@ for (const project of projects) {
     'documentation-home': `https://field-ready-projects.openknowhow.org/${id.toLowerCase()}`,
   };
 
-  const manifestYaml = yaml.stringify(manifest);
-
   fs.writeFileSync(
     path.join('public', 'manifests', `okh-${id}.yml`),
-    manifestYaml,
+    yaml.stringify(manifest),
   );
   fs.writeFileSync(
     path.join('public', 'manifests', `okh-${id}.json`),
     JSON.stringify(manifest, null, 2),
   );
+  list.push(
+    `https://field-ready-projects.openknowhow.org/manifests/okh-${id}.yml`,
+  );
+  listJson.push(
+    `https://field-ready-projects.openknowhow.org/manifests/okh-${id}.json`,
+  );
 }
+
+fs.writeFileSync(
+  path.join('public', 'manifests', `list.yaml`),
+  yaml.stringify(list),
+);
+
+fs.writeFileSync(
+  path.join('public', 'manifests', `list.json`),
+  JSON.stringify(listJson, null, 2),
+);
