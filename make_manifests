@@ -28,7 +28,7 @@ for (const project of projects) {
     schematics: project['Eng Dwg'].map(({filename, url}) => {
       return {path: url, title: filename};
     }),
-    'documentation-home': `https://field-ready-projects.openknowhow.org/${id}`,
+    'documentation-home': `https://field-ready-projects.openknowhow.org/${id.toLowerCase()}`,
   };
 
   const manifestYaml = yaml.stringify(manifest);
