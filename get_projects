@@ -85,7 +85,7 @@ async function makeThumbnail(id, imageUrl, width, height) {
     return null;
   }
 
-  const ext = path.extname(imageUrl).toLowerCase();
+  const ext = path.extname(imageUrl.split('?')[0]).toLowerCase();
   const thumbnailUrl = `/images/${id}-${width}x${height}${ext}`;
   const imagePath = path.join("public", thumbnailUrl);
 
