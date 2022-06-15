@@ -1,61 +1,95 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const yaml = require('yaml');
+const fs = require("fs");
+const path = require("path");
+const yaml = require("yaml");
+const { Feed } = require("feed");
 
-const projects = require('./projects.json');
+const projects = require("./projects.json");
 
 const list = [];
 const listJson = [];
 
+const feed = new Feed({
+  title: "Field Ready OKH Projects",
+  description: "Field Ready Open Know-How Projects",
+  link: "https://field-ready-projects.openknowhow.org",
+  favicon: "https://field-ready-projects.openknowhow.org/icon.jpg",
+  feedLinks: {
+    json: "https://field-ready-projects.openknowhow.org/feed-okh.json",
+  },
+});
+
 for (const project of projects) {
-  const id = project['Part No.'];
+  const id = project["Part No."];
   const manifest = {
-    title: `${project['Part No.']} - ${project.Name}`,
+    title: `${project["Part No."]} - ${project.Name}`,
     description: project.Description,
-    contributors: [{name: project.Designer}],
-    'date-created': new Date().toISOString().split('T')[0],
-    'manifest-language': 'En-US',
-    'documentation-language': 'En-US',
+    contributors: [{ name: project.Designer }],
+    "date-created": new Date().toISOString().split("T")[0],
+    "manifest-language": "En-US",
+    "documentation-language": "En-US",
     image: project.images[0].fullscreen,
     license: {
       documentation: project.Licence || null,
-      hardware: project['Open Hardware Licence'] || null,
+      hardware: project["Open Hardware Licence"] || null,
     },
-    licensor: 'Field Ready',
+    licensor: "Field Ready",
     made: project.Maker != null,
-    'design-files': project.CAD.map(({filename, url}) => {
-      return {path: url, title: filename};
+    "design-files": project.CAD.map(({ filename, url }) => {
+      return { path: url, title: filename };
     }),
-    schematics: project['Eng Dwg'].map(({filename, url}) => {
-      return {path: url, title: filename};
+    schematics: project["Eng Dwg"].map(({ filename, url }) => {
+      return { path: url, title: filename };
     }),
-    'documentation-home': `https://field-ready-projects.openknowhow.org/${id.toLowerCase()}`,
+    "documentation-home": `https://field-ready-projects.openknowhow.org/${id.toLowerCase()}`,
   };
 
   fs.writeFileSync(
-    path.join('public', 'manifests', `okh-${id}.yml`),
-    yaml.stringify(manifest),
+    path.join("public", "manifests", `okh-${id}.yml`),
+    yaml.stringify(manifest)
   );
   fs.writeFileSync(
-    path.join('public', 'manifests', `okh-${id}.json`),
-    JSON.stringify(manifest, null, 2),
+    path.join("public", "manifests", `okh-${id}.json`),
+    JSON.stringify(manifest, null, 2)
   );
+
   list.push(
-    `https://field-ready-projects.openknowhow.org/manifests/okh-${id}.yml`,
+    `https://field-ready-projects.openknowhow.org/manifests/okh-${id}.yml`
   );
-  listJson.push(
-    `https://field-ready-projects.openknowhow.org/manifests/okh-${id}.json`,
-  );
+
+  const manifestJsonUrl = `https://field-ready-projects.openknowhow.org/manifests/okh-${id}.json`;
+
+  listJson.push(manifestJsonUrl);
+
+  feed.addItem({
+    title: manifest.title,
+    id: manifestJsonUrl,
+    link: manifestJsonUrl,
+    content: manifest.description,
+    image: manifest.image,
+  });
 }
 
 fs.writeFileSync(
-  path.join('public', 'manifests', `list.yml`),
-  yaml.stringify(list),
+  path.join("public", "manifests", `list.yml`),
+  yaml.stringify(list)
+);
+
+// we'd like to use content_text but the feed lib does not support it yet
+const feedRemapped = JSON.parse(feed.json1());
+feedRemapped.items = feedRemapped.items.map((i) => ({
+  ...i,
+  content_html: undefined,
+  content_text: i.content_html,
+}));
+
+fs.writeFileSync(
+  path.join("public", "feed-okh.json"),
+  JSON.stringify(feedRemapped, null, 2)
 );
 
 fs.writeFileSync(
-  path.join('public', 'manifests', `list.json`),
-  JSON.stringify(listJson, null, 2),
+  path.join("public", "manifests", `list.json`),
+  JSON.stringify(listJson, null, 2)
 );

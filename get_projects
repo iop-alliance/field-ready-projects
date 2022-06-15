@@ -1,26 +1,26 @@
 #!/usr/bin/env node
-const Airtable = require('airtable');
-const fetch = require('isomorphic-unfetch');
-const path = require('path');
-const fs = require('fs');
-const imageThumbnail = require('image-thumbnail');
+const Airtable = require("airtable");
+const fetch = require("isomorphic-unfetch");
+const path = require("path");
+const fs = require("fs");
+const imageThumbnail = require("image-thumbnail");
 
-const {exists} = require('./utils');
+const { exists } = require("./utils");
 
-const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(
-  'appGVXX1d94zOm395',
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
+  "appGVXX1d94zOm395"
 );
 
-base('FR Portfolio')
+base("FR Portfolio")
   .select({
-    view: 'Grid view',
+    view: "Grid view",
   })
   .all()
-  .then(records => {
-    const fields = records.map(record => record.fields);
+  .then((records) => {
+    const fields = records.map((record) => record.fields);
     return Promise.all(
-      fields.map(async p => {
-        if (p['Eng Dwg'] == null && p['CAD'] == null) {
+      fields.map(async (p) => {
+        if (p["Eng Dwg"] == null && p["CAD"] == null) {
           return null;
         }
         await Promise.all(
@@ -30,34 +30,34 @@ base('FR Portfolio')
             //'Test Plan',
             //'FAI',
             //'BOM',
-            'Maker Manual',
-            'User Manual',
-          ].map(async n => {
+            "Maker Manual",
+            "User Manual",
+          ].map(async (n) => {
             const rec = p[n]?.[0];
             if (rec) {
-              const record = await base('FR Portfolio').find(rec);
+              const record = await base("FR Portfolio").find(rec);
               p[n] = record.fields;
             }
-          }),
+          })
         );
-        const partNo = p['Part No.'];
+        const partNo = p["Part No."];
         const images = await Promise.all(
           [
-            ...p['Catalogue Image'],
-            ...p['In use Image'],
-            ...p['CAD Image'],
-          ].map(async ({url, id}) => {
+            ...p["Catalogue Image"],
+            ...p["In use Image"],
+            ...p["CAD Image"],
+          ].map(async ({ url, id }) => {
             const original = await makeThumbnail(
-              partNo + '-' + id,
+              partNo + "-" + id,
               url,
               400,
-              300,
+              300
             );
             const projectCard = await makeThumbnail(
-              partNo + '-' + id,
+              partNo + "-" + id,
               url,
               290,
-              200,
+              200
             );
             return {
               original,
@@ -65,15 +65,19 @@ base('FR Portfolio')
               projectCard,
               fullscreen: url,
             };
-          }),
+          })
         );
-        return {...p, images};
-      }),
+        return { ...p, images };
+      })
     );
   })
-  .then(projects => {
-    projects = projects.filter(x => x);
+  .then((projects) => {
+    projects = projects.filter((x) => x);
     console.log(JSON.stringify(projects, null, 2));
+  })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
   });
 
 async function makeThumbnail(id, imageUrl, width, height) {
@@ -83,23 +87,23 @@ async function makeThumbnail(id, imageUrl, width, height) {
 
   const ext = path.extname(imageUrl).toLowerCase();
   const thumbnailUrl = `/images/${id}-${width}x${height}${ext}`;
-  const imagePath = path.join('public', thumbnailUrl);
+  const imagePath = path.join("public", thumbnailUrl);
 
   const doesExist = await exists(imagePath);
   if (doesExist) {
     return thumbnailUrl;
   }
 
-  const r = await fetch(imageUrl).catch(e => {
-    console.warn('--------------------------------------------');
+  const r = await fetch(imageUrl).catch((e) => {
+    console.warn("--------------------------------------------");
     console.warn(e);
-    console.warn('--------------------------------------------');
+    console.warn("--------------------------------------------");
     return null;
   });
 
   if (
     r.status != 200 ||
-    !/^image\//.test(r.headers.get('Content-Type')) ||
+    !/^image\//.test(r.headers.get("Content-Type")) ||
     r.body == null
   ) {
     console.warn("Can't read image:", imageUrl);
@@ -110,15 +114,15 @@ async function makeThumbnail(id, imageUrl, width, height) {
       const thumb = await imageThumbnail(r.body, {
         height,
         width,
-        fit: 'cover',
+        fit: "cover",
       });
       await fs.promises.writeFile(imagePath, thumb);
     } catch (e) {
-      console.warn('--------------------------------------------');
+      console.warn("--------------------------------------------");
       console.warn(e);
-      console.warn('............................................');
+      console.warn("............................................");
       console.warn("Can't write thumbnail for:", imageUrl);
-      console.warn('--------------------------------------------');
+      console.warn("--------------------------------------------");
       return null;
     }
   }
