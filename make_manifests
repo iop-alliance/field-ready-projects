@@ -8,7 +8,6 @@ const { Feed } = require("feed");
 const projects = require("./projects.json");
 
 const list = [];
-const listJson = [];
 
 const feed = new Feed({
   title: "Field Ready OKH Projects",
@@ -60,8 +59,6 @@ for (const project of projects) {
 
   const manifestJsonUrl = `https://field-ready-projects.openknowhow.org/manifests/okh-${id}.json`;
 
-  listJson.push(manifestJsonUrl);
-
   feed.addItem({
     title: manifest.title,
     id: manifestJsonUrl,
@@ -91,5 +88,5 @@ fs.writeFileSync(
 
 fs.writeFileSync(
   path.join("public", "manifests", `list.json`),
-  JSON.stringify(listJson, null, 2)
+  JSON.stringify(list, null, 2)
 );
